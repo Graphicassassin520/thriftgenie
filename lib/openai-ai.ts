@@ -163,21 +163,17 @@ Respond ONLY with the final JSON.`
       throw new Error('No content received from OpenAI Vision API');
     }
 
-    // Parse the JSON response
+    // Parse the JSON response with robust extraction
     let analysis: AnalysisResult;
     try {
-      // Strip markdown code blocks if present
-      let cleanContent = content.trim();
-      if (cleanContent.startsWith('```json')) {
-        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-      } else if (cleanContent.startsWith('```')) {
-        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
-      }
-      
-      analysis = JSON.parse(cleanContent) as AnalysisResult;
+      analysis = extractJSONFromResponse(content);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', content);
-      throw new Error('Invalid JSON response from OpenAI Vision API - unable to parse final analysis');
+      console.error('❌ Failed to parse OpenAI response:', content);
+      console.error('❌ Parse error details:', parseError);
+      
+      // Try to provide more helpful error information
+      const truncatedContent = content.length > 500 ? content.substring(0, 500) + '...' : content;
+      throw new Error(`Invalid JSON response from OpenAI Vision API. Response preview: "${truncatedContent}"`);
     }
     
     // Validate the response has required fields
@@ -220,6 +216,82 @@ Respond ONLY with the final JSON.`
     
     // Re-throw the error to be handled by the API endpoint
     throw error;
+  }
+}
+
+/**
+ * Extract JSON from OpenAI response with multiple fallback strategies
+ */
+function extractJSONFromResponse(content: string): AnalysisResult {
+  let cleanContent = content.trim();
+  
+  // Strategy 1: Remove markdown code blocks
+  if (cleanContent.includes('```')) {
+    // Handle various code block formats
+    cleanContent = cleanContent
+      .replace(/^```json\s*/gm, '')
+      .replace(/^```\s*/gm, '')
+      .replace(/\s*```\s*$/gm, '')
+      .replace(/```/g, '');
+  }
+  
+  // Strategy 2: Extract JSON from text that may have additional content
+  const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    cleanContent = jsonMatch[0];
+  }
+  
+  // Strategy 3: Clean up common formatting issues
+  cleanContent = cleanContent
+    .trim()
+    .replace(/\n\s*\n/g, '\n') // Remove extra newlines
+    .replace(/,\s*}/g, '}')    // Remove trailing commas
+    .replace(/,\s*]/g, ']');   // Remove trailing commas in arrays
+  
+  // Strategy 4: Try parsing
+  try {
+    const parsed = JSON.parse(cleanContent);
+    
+    // Validate it has the expected structure
+    if (typeof parsed === 'object' && parsed !== null) {
+      return parsed as AnalysisResult;
+    }
+    throw new Error('Parsed result is not an object');
+  } catch (directParseError) {
+    // Strategy 5: Try to find and extract a valid JSON object manually
+    const lines = cleanContent.split('\n');
+    let jsonLines: string[] = [];
+    let inJson = false;
+    let braceCount = 0;
+    
+    for (const line of lines) {
+      if (line.trim().startsWith('{')) {
+        inJson = true;
+        braceCount = 0;
+      }
+      
+      if (inJson) {
+        jsonLines.push(line);
+        braceCount += (line.match(/\{/g) || []).length;
+        braceCount -= (line.match(/\}/g) || []).length;
+        
+        if (braceCount === 0 && line.includes('}')) {
+          break;
+        }
+      }
+    }
+    
+    if (jsonLines.length > 0) {
+      try {
+        const reconstructedJson = jsonLines.join('\n').trim();
+        return JSON.parse(reconstructedJson) as AnalysisResult;
+      } catch (reconstructError) {
+        console.error('❌ Reconstruction failed:', reconstructError);
+      }
+    }
+    
+    // If all strategies fail, throw with detailed info
+    throw new Error(`All JSON parsing strategies failed. Original error: ${directParseError}`);
   }
 }
 
