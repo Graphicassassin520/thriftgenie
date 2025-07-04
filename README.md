@@ -158,4 +158,4 @@ For support, email support@thriftgenie.com or create an issue in the GitHub repo
 
 ---
 
-**Built with ❤️ using Next.js and OpenAI** 
+**Built with ❤️ using Next.js and OpenAI** # Triggering redeploy after adding environment variables
