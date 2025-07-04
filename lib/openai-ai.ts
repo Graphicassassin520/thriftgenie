@@ -247,7 +247,7 @@ function extractJSONFromResponse(content: string): AnalysisResult {
     .replace(/\n\s*\n/g, '\n') // Remove extra newlines
     .replace(/,\s*}/g, '}')    // Remove trailing commas
     .replace(/,\s*]/g, ']')    // Remove trailing commas in arrays
-    .replace(/"dimensions": "([^"]+)" x ([^"]+)" x ([^"]+)""/g, '"dimensions": "$1\\" x $2\\" x $3\\""') // Fix dimensions with quotes and extra quote
+    .replace(/"dimensions": "([^}]+)""/g, '"dimensions": "$1"') // Fix dimensions with extra quote at end
     .replace(/"([^"]+)": "([^"]*)""/g, '"$1": "$2"') // Fix any other double quotes at end of values
     .replace(/: "([^"]*)"([^",}\]]+)"/g, ': "$1$2"'); // Fix other quote issues
   
