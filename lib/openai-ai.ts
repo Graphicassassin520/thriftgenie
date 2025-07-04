@@ -241,16 +241,26 @@ function extractJSONFromResponse(content: string): AnalysisResult {
     cleanContent = jsonMatch[0];
   }
   
-  // Strategy 3: Clean up common formatting issues
+  // Strategy 3: Fix dimensions field with unescaped quotes (common issue)
+  // This specifically handles cases like: "dimensions": "13" x 9" x 0.6""
+  cleanContent = cleanContent.replace(
+    /"dimensions":\s*"([^"]*)"([^"]*)"([^"]*)"([^"]*)"?/g,
+    (match, p1, p2, p3, p4) => {
+      // Escape quotes within the dimensions value
+      const escapedValue = `${p1}\\"${p2}\\"${p3}\\"${p4}`;
+      return `"dimensions": "${escapedValue}"`;
+    }
+  );
+  
+  // Strategy 4: Clean up common formatting issues
   cleanContent = cleanContent
     .trim()
     .replace(/\n\s*\n/g, '\n') // Remove extra newlines
     .replace(/,\s*}/g, '}')    // Remove trailing commas
     .replace(/,\s*]/g, ']')    // Remove trailing commas in arrays
-    .replace(/""\s*([,}])/g, '"$1') // Fix double quotes at end of values before comma or closing brace
-    .replace(/: "([^"]*)"([^",}\]]+)"/g, ': "$1$2"'); // Fix other quote issues
+    .replace(/""\s*([,}])/g, '"$1'); // Fix double quotes at end of values before comma or closing brace
   
-  // Strategy 4: Try parsing
+  // Strategy 5: Try parsing
   try {
     const parsed = JSON.parse(cleanContent);
     
@@ -260,7 +270,7 @@ function extractJSONFromResponse(content: string): AnalysisResult {
     }
     throw new Error('Parsed result is not an object');
   } catch (directParseError) {
-    // Strategy 5: Try to find and extract a valid JSON object manually
+    // Strategy 6: Try to find and extract a valid JSON object manually
     const lines = cleanContent.split('\n');
     let jsonLines: string[] = [];
     let inJson = false;
