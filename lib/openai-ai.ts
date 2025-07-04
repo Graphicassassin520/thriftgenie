@@ -246,7 +246,11 @@ function extractJSONFromResponse(content: string): AnalysisResult {
     .trim()
     .replace(/\n\s*\n/g, '\n') // Remove extra newlines
     .replace(/,\s*}/g, '}')    // Remove trailing commas
-    .replace(/,\s*]/g, ']');   // Remove trailing commas in arrays
+    .replace(/,\s*]/g, ']')    // Remove trailing commas in arrays
+    .replace(/(\d+)" x (\d+)" x (\d+\.\d+)""/g, '$1" x $2" x $3"') // Fix double quotes in dimensions
+    .replace(/(\d+)" x (\d+)"/g, '$1\\" x $2\\"') // Escape quotes in dimensions
+    .replace(/: "([^"]*)"([^",}\]]*)"([^",}\]]*)"([^",}\]]*)"([^",}\]]*)"([^",}\]]*)"([^",}\]]*)"([^",}\]]*)/g, ': "$1$2$3$4$5$6$7$8"') // Fix multiple quotes in values
+    .replace(/: "([^"]*)"([^",}\]]+)"/g, ': "$1$2"'); // Fix basic quote issues
   
   // Strategy 4: Try parsing
   try {
