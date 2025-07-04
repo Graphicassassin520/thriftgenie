@@ -1,0 +1,12 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/cache-bust/route": "app/api/cache-bust/route.js",
+  "/api/listings/route": "app/api/listings/route.js",
+  "/api/deployment-status/route": "app/api/deployment-status/route.js",
+  "/api/deployment/route": "app/api/deployment/route.js",
+  "/page": "app/page.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/api/analyze/route": "app/api/analyze/route.js",
+  "/api/enhance/route": "app/api/enhance/route.js",
+  "/api/version/route": "app/api/version/route.js"
+}

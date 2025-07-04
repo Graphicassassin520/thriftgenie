@@ -1,0 +1,55 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Listing {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Original image data
+  originalImageUrl String
+  enhancedImageUrl String?
+  
+  // AI Analysis results
+  category    String
+  condition   String
+  material    String?
+  color       String?
+  brand       String?
+  dimensions  String?
+  
+  // Pricing
+  suggestedPrice Decimal?
+  pricingReason  String?
+  
+  // Platform content
+  platformContent PlatformContent[]
+  
+  @@map("listings")
+}
+
+model PlatformContent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  
+  platform    String // facebook, instagram, tiktok, poshmark, mercari, craigslist, etsy, website, x
+  title       String
+  description String
+  hashtags    String?
+  
+  @@map("platform_content")
+}

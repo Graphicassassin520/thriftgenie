@@ -1,0 +1,403 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cache-busting styles with dynamic timestamp */
+:root {
+  --cache-bust-timestamp: v1735148800000; /* This changes with each build */
+  --deployment-id: deploy-fresh;
+  --build-hash: build-latest;
+}
+
+/* Force style refresh with versioned classes */
+.cache-bust-v1735148800000 {
+  animation: cache-refresh 0.1s ease-in-out;
+}
+
+@keyframes cache-refresh {
+  0% { opacity: 0.99; }
+  100% { opacity: 1; }
+}
+
+/* Deployment-specific styles that change with each deploy */
+.deployment-fresh {
+  --deployment-indicator: 1;
+}
+
+.deployment-fresh::before {
+  content: "🚀 LIVE";
+  display: none;
+}
+
+/* Cache-busting utility classes with timestamp */
+.fresh-content {
+  position: relative;
+}
+
+.fresh-content::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Force re-render trigger */
+.deployment-status {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Mobile-first responsive foundations */
+@layer base {
+  /* Ensure proper viewport behavior on mobile */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  
+  /* Mobile-optimized base font size */
+  body {
+    font-size: 16px; /* Minimum readable size on mobile */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Touch-friendly interactive elements */
+  button, 
+  [role="button"], 
+  input[type="submit"], 
+  input[type="button"] {
+    min-height: 44px; /* Apple's recommended minimum touch target */
+    min-width: 44px;
+    touch-action: manipulation; /* Prevents double-tap zoom on buttons */
+  }
+  
+  /* Improve tap targets for links */
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    touch-action: manipulation;
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  body {
+    overflow-x: hidden;
+  }
+  
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 45 93% 47%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 262 15% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 45 93% 47%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 262 15% 91%;
+    --input: 262 15% 91%;
+    --ring: 262 83% 58%;
+    --radius: 0.75rem;
+    
+    /* ThriftGenie Brand Colors */
+    --thrift-purple-primary: 262 83% 58%;
+    --thrift-purple-light: 262 77% 70%;
+    --thrift-purple-lighter: 262 50% 85%;
+    --thrift-gold-primary: 45 93% 47%;
+    --thrift-gold-light: 45 93% 60%;
+    --thrift-gold-lighter: 45 93% 85%;
+  }
+
+  .dark {
+    --background: 262 50% 8%;
+    --foreground: 210 40% 98%;
+    --card: 262 50% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 262 50% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 262 77% 70%;
+    --primary-foreground: 262 50% 8%;
+    --secondary: 262 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 262 32% 17%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 45 93% 60%;
+    --accent-foreground: 262 50% 8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 262 32% 17%;
+    --input: 262 32% 17%;
+    --ring: 262 77% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth animations */
+* {
+  @apply transition-colors duration-200;
+}
+
+/* ThriftGenie Custom Gradients */
+.thrift-gradient-bg {
+  background: linear-gradient(135deg, hsl(var(--thrift-purple-primary)) 0%, hsl(var(--thrift-gold-primary)) 100%);
+}
+
+.thrift-gradient-text {
+  background: linear-gradient(135deg, hsl(var(--thrift-purple-primary)) 0%, hsl(var(--thrift-gold-primary)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.thrift-purple-gradient {
+  background: linear-gradient(135deg, hsl(var(--thrift-purple-primary)) 0%, hsl(var(--thrift-purple-light)) 100%);
+}
+
+.thrift-gold-gradient {
+  background: linear-gradient(135deg, hsl(var(--thrift-gold-primary)) 0%, hsl(var(--thrift-gold-light)) 100%);
+}
+
+/* Magic sparkle animation */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1) rotate(180deg);
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Magical glow effect */
+.magic-glow {
+  box-shadow: 0 0 20px hsl(var(--thrift-purple-primary) / 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.magic-glow:hover {
+  box-shadow: 0 0 30px hsl(var(--thrift-purple-primary) / 0.5);
+}
+
+/* Loading animation */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Card hover effects with magical theme */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+.card-hover:hover {
+  box-shadow: 0 10px 25px hsl(var(--thrift-purple-primary) / 0.15);
+}
+
+/* Button animations */
+.btn-animate {
+  @apply transition-all duration-200 hover:scale-105 active:scale-95;
+}
+
+/* Focus styles with brand colors */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+/* Magical floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Custom utility classes for ThriftGenie brand */
+.text-thrift-purple {
+  color: hsl(var(--thrift-purple-primary));
+}
+
+.text-thrift-gold {
+  color: hsl(var(--thrift-gold-primary));
+}
+
+.bg-thrift-purple {
+  background-color: hsl(var(--thrift-purple-primary));
+}
+
+.bg-thrift-gold {
+  background-color: hsl(var(--thrift-gold-primary));
+}
+
+.border-thrift-purple {
+  border-color: hsl(var(--thrift-purple-primary));
+}
+
+.border-thrift-gold {
+  border-color: hsl(var(--thrift-gold-primary));
+}
+
+/* Mobile-specific utility classes */
+.mobile-container {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.mobile-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+}
+
+.mobile-text-lg {
+  @apply text-base sm:text-lg;
+}
+
+.mobile-text-xl {
+  @apply text-lg sm:text-xl;
+}
+
+.mobile-text-2xl {
+  @apply text-xl sm:text-2xl;
+}
+
+.mobile-text-3xl {
+  @apply text-2xl sm:text-3xl lg:text-4xl;
+}
+
+.mobile-text-4xl {
+  @apply text-3xl sm:text-4xl lg:text-5xl;
+}
+
+.mobile-text-6xl {
+  @apply text-4xl sm:text-5xl lg:text-6xl;
+}
+
+.mobile-p-4 {
+  @apply p-3 sm:p-4 lg:p-6;
+}
+
+.mobile-p-6 {
+  @apply p-4 sm:p-6 lg:p-8;
+}
+
+.mobile-p-8 {
+  @apply p-6 sm:p-8 lg:p-10;
+}
+
+.mobile-gap-4 {
+  @apply gap-3 sm:gap-4 lg:gap-6;
+}
+
+.mobile-gap-6 {
+  @apply gap-4 sm:gap-6 lg:gap-8;
+}
+
+.mobile-gap-8 {
+  @apply gap-6 sm:gap-8 lg:gap-10;
+}
+
+/* Touch-friendly button styles */
+.btn-mobile {
+  @apply min-h-[44px] px-6 py-3 text-base font-medium rounded-lg;
+  @apply active:scale-95 transition-transform duration-150;
+}
+
+.btn-mobile-lg {
+  @apply min-h-[48px] px-8 py-4 text-lg font-medium rounded-xl;
+  @apply active:scale-95 transition-transform duration-150;
+}
+
+/* Mobile-optimized card styles */
+.card-mobile {
+  @apply rounded-xl shadow-lg border;
+  @apply hover:shadow-xl transition-shadow duration-300;
+  @apply active:scale-[0.98] transition-transform duration-150;
+}
+
+/* Mobile-friendly form inputs */
+.input-mobile {
+  @apply min-h-[44px] px-4 py-3 text-base rounded-lg border;
+  @apply focus:ring-2 focus:ring-primary focus:border-transparent;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-sparkle,
+  .animate-float,
+  .animate-pulse-slow {
+    animation: none;
+  }
+  
+  .btn-animate,
+  .card-hover {
+    transition: none;
+  }
+}
+
+/* Mobile-specific animations (lighter for performance) */
+@media (max-width: 768px) {
+  .animate-sparkle {
+    animation-duration: 3s; /* Slower on mobile to reduce battery drain */
+  }
+  
+  .animate-float {
+    animation-duration: 4s;
+  }
+  
+  .magic-glow {
+    box-shadow: 0 0 15px hsl(var(--thrift-purple-primary) / 0.2);
+  }
+  
+  .magic-glow:hover {
+    box-shadow: 0 0 20px hsl(var(--thrift-purple-primary) / 0.3);
+  }
+}
